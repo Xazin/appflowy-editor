@@ -393,6 +393,8 @@ void showLinkMenu(
       top: matchRect.bottom + 5.0,
       left: matchRect.left,
       child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(6),
         child: LinkMenu(
           linkText: linkText,
           editorState: editorState,

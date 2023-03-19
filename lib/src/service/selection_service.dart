@@ -160,18 +160,18 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
       return Container(
         child: widget.child,
       );
-    } else {
-      return SelectionGestureDetector(
-        onPanStart: _onPanStart,
-        onPanUpdate: _onPanUpdate,
-        onPanEnd: _onPanEnd,
-        onTapDown: _onTapDown,
-        onSecondaryTapDown: _onSecondaryTapDown,
-        onDoubleTapDown: _onDoubleTapDown,
-        onTripleTapDown: _onTripleTapDown,
-        child: widget.child,
-      );
     }
+
+    return SelectionGestureDetector(
+      onPanStart: _onPanStart,
+      onPanUpdate: _onPanUpdate,
+      onPanEnd: _onPanEnd,
+      onTapDown: _onTapDown,
+      onSecondaryTapDown: _onSecondaryTapDown,
+      onDoubleTapDown: _onDoubleTapDown,
+      onTripleTapDown: _onTripleTapDown,
+      child: widget.child,
+    );
   }
 
   @override
@@ -187,20 +187,24 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     final end =
         selection.isBackward ? selection.end.path : selection.start.path;
     assert(start <= end);
+
     final startNode = editorState.document.nodeAtPath(start);
     final endNode = editorState.document.nodeAtPath(end);
+
     if (startNode != null && endNode != null) {
       final nodes = NodeIterator(
         document: editorState.document,
         startNode: startNode,
         endNode: endNode,
       ).toList();
+
       if (selection.isBackward) {
         return nodes;
-      } else {
-        return nodes.reversed.toList(growable: false);
       }
+
+      return nodes.reversed.toList(growable: false);
     }
+
     return [];
   }
 
@@ -305,10 +309,11 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     final offset = details.globalPosition;
     final node = getNodeInOffset(offset);
     final selection = node?.selectable?.getWordBoundaryInOffset(offset);
+
     if (selection == null) {
-      clearSelection();
-      return;
+      return clearSelection();
     }
+
     updateSelection(selection);
 
     _enableInteraction();
@@ -318,14 +323,16 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     final offset = details.globalPosition;
     final node = getNodeInOffset(offset);
     final selectable = node?.selectable;
+
     if (selectable == null) {
-      clearSelection();
-      return;
+      return clearSelection();
     }
-    Selection selection = Selection(
+
+    final selection = Selection(
       start: selectable.start(),
       end: selectable.end(),
     );
+
     updateSelection(selection);
 
     _enableInteraction();
@@ -337,8 +344,7 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     // try to select the word.
     final selection = currentSelection.value;
     if (selection == null ||
-        (selection.isCollapsed == true &&
-            currentSelectedNodes.first is TextNode)) {
+        (selection.isCollapsed && currentSelectedNodes.first is TextNode)) {
       _onDoubleTapDown(details);
     }
 
@@ -411,6 +417,7 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     for (var i = 0; i < backwardNodes.length; i++) {
       final node = backwardNodes[i];
       final selectable = node.selectable;
+
       if (selectable == null) {
         continue;
       }
@@ -440,6 +447,7 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
 
       const baseToolbarOffset = Offset(0, 35.0);
       final rects = selectable.getRectsInSelection(newSelection);
+
       for (final rect in rects) {
         final selectionRect = _transformRectToGlobal(selectable, rect);
         selectionRects.add(selectionRect);
@@ -483,6 +491,7 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
             rect: rect,
           ),
         );
+
         _selectionAreas.add(overlay);
       }
     }
@@ -510,6 +519,7 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
   void _showCursor(Node node, Position position) {
     final selectable = node.selectable;
     final cursorRect = selectable?.getCursorRectInPosition(position);
+
     if (selectable != null && cursorRect != null) {
       final cursorArea = OverlayEntry(
         builder: (context) => CursorWidget(
@@ -572,8 +582,8 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     final topLimit = size * 0.3;
     final bottomLimit = size * 0.8;
 
-    // TODO: It is necessary to calculate the relative speed
-    //   according to the gap and move forward more gently.
+    /// TODO: It is necessary to calculate the relative speed
+    ///  according to the gap and move forward more gently.
     if (rect.top >= bottomLimit) {
       if (selection.isSingle) {
         editorState.service.scrollService?.scrollTo(dy + size * 0.2);
@@ -592,19 +602,24 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     if (start < 0 && end >= sortedNodes.length) {
       return null;
     }
+
     var min = start;
     var max = end;
+
     while (min <= max) {
       final mid = min + ((max - min) >> 1);
       final rect = sortedNodes[mid].rect;
+
       if (rect.bottom <= offset.dy) {
         min = mid + 1;
       } else {
         max = mid - 1;
       }
     }
+
     min = min.clamp(start, end);
     final node = sortedNodes[min];
+
     if (node.children.isNotEmpty && node.children.first.rect.top <= offset.dy) {
       final children = node.children.toList(growable: false);
       return _getNodeInOffset(
@@ -614,6 +629,7 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
         children.length - 1,
       );
     }
+
     return node;
   }
 
@@ -638,12 +654,13 @@ class _AppFlowySelectionState extends State<AppFlowySelection>
     Duration delay = const Duration(milliseconds: 400),
   }) {
     if (toolbarOffset == null && layerLink == null) {
-      _clearToolbar();
-      return;
+      return _clearToolbar();
     }
+
     if (_toolbarTimer?.isActive ?? false) {
       _toolbarTimer?.cancel();
     }
+
     _toolbarTimer = Timer(
       delay,
       () {

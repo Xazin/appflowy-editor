@@ -85,6 +85,7 @@ class _AppFlowyScrollState extends State<AppFlowyScroll>
       final scrollExtent = maxScrollExtent - minScrollExtent;
       return (scrollExtent / onePageHeight!).ceil();
     }
+
     return null;
   }
 
@@ -131,14 +132,14 @@ class _AppFlowyScrollState extends State<AppFlowyScroll>
 
   void _onPointerSignal(PointerSignalEvent event) {
     if (event is PointerScrollEvent && _scrollEnabled) {
-      final dy = (_scrollController.position.pixels + event.scrollDelta.dy);
+      final dy = _scrollController.position.pixels + event.scrollDelta.dy;
       scrollTo(dy);
     }
   }
 
   void _onPointerPanZoomUpdate(PointerPanZoomUpdateEvent event) {
     if (_scrollEnabled) {
-      final dy = (_scrollController.position.pixels - event.panDelta.dy);
+      final dy = _scrollController.position.pixels - event.panDelta.dy;
       scrollTo(dy);
     }
   }

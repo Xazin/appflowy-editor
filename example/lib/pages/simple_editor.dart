@@ -39,11 +39,11 @@ class SimpleEditor extends StatelessWidget {
             themeData: themeData,
             autoFocus: editorState.document.isEmpty,
           );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
         }
+
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }

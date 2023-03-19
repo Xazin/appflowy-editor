@@ -15,9 +15,7 @@ class EditorEntryWidgetBuilder extends NodeWidgetBuilder<Node> {
   }
 
   @override
-  NodeValidator<Node> get nodeValidator => ((node) {
-        return node.type == 'editor';
-      });
+  NodeValidator<Node> get nodeValidator => (node) => node.type == 'editor';
 }
 
 class EditorNodeWidget extends StatelessWidget {

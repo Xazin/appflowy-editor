@@ -16,9 +16,9 @@ mixin BuiltInTextWidgetMixin<T extends BuiltInTextWidget> on State<T>
   Widget build(BuildContext context) {
     if (widget.textNode.children.isEmpty) {
       return buildWithSingle(context);
-    } else {
-      return buildWithChildren(context);
     }
+
+    return buildWithChildren(context);
   }
 
   Widget buildWithSingle(BuildContext context);
@@ -32,9 +32,7 @@ mixin BuiltInTextWidgetMixin<T extends BuiltInTextWidget> on State<T>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TODO: customize
-            const SizedBox(
-              width: 20,
-            ),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
