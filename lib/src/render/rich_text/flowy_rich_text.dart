@@ -308,11 +308,12 @@ class _FlowyRichTextState extends State<FlowyRichText> with SelectableMixin {
     var tapCount = 0;
     final tapGestureRecognizer = TapGestureRecognizer()
       ..onTap = () async {
-        // implement a simple double tap logic
         tapCount += 1;
         timer?.cancel();
 
-        if (tapCount == 2) {
+        /// If editable and 2 taps then open link
+        /// If not editable and 1 tap then open link
+        if (tapCount == 2 || !widget.editorState.editable && tapCount == 1) {
           tapCount = 0;
           safeLaunchUrl(href);
           return;
@@ -331,6 +332,7 @@ class _FlowyRichTextState extends State<FlowyRichText> with SelectableMixin {
           });
         });
       };
+
     return tapGestureRecognizer;
   }
 }

@@ -75,6 +75,7 @@ class _CheckboxNodeWidgetState extends State<CheckboxNodeWidget>
   @override
   Widget buildWithSingle(BuildContext context) {
     final check = widget.textNode.attributes.check;
+
     return Padding(
       padding: padding,
       child: Row(
@@ -84,11 +85,14 @@ class _CheckboxNodeWidgetState extends State<CheckboxNodeWidget>
             key: iconKey,
             behavior: HitTestBehavior.opaque,
             onTap: () async {
-              await widget.editorState.formatTextToCheckbox(
-                widget.editorState,
-                !check,
-                textNode: widget.textNode,
-              );
+              // Check to make sure, if not editable, can't mark things done/undone
+              if (widget.editorState.editable) {
+                await widget.editorState.formatTextToCheckbox(
+                  widget.editorState,
+                  !check,
+                  textNode: widget.textNode,
+                );
+              }
             },
             child: icon,
           ),

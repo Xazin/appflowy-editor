@@ -1,6 +1,5 @@
 import 'package:appflowy_editor/appflowy_editor.dart';
-import 'package:appflowy_editor/src/flutter/overlay.dart';
-import 'package:flutter/material.dart' hide Overlay, OverlayEntry;
+import 'package:flutter/material.dart';
 
 class AppFlowyViewer extends StatefulWidget {
   AppFlowyViewer({
@@ -56,18 +55,10 @@ class _AppFlowyViewerState extends State<AppFlowyViewer> {
 
   @override
   Widget build(BuildContext context) {
-    services ??= _buildServices(context);
-
-    return Overlay(
-      initialEntries: [
-        OverlayEntry(
-          builder: (context) => services!,
-        ),
-      ],
-    );
+    return services ??= _buildServices(context);
   }
 
-  EditorState get editorState => widget.editorState;
+  EditorState get editorState => widget.editorState..editable = false;
 
   EditorStyle get editorStyle =>
       editorState.themeData.extension<EditorStyle>() ?? EditorStyle.light;
@@ -97,11 +88,16 @@ class _AppFlowyViewerState extends State<AppFlowyViewer> {
     return Theme(
       data: widget.themeData,
       child: _buildParent(
-        editorState.service.renderPluginService.buildPluginWidget(
-          NodeWidgetContext(
-            context: context,
-            node: editorState.document.root,
-            editorState: editorState,
+        AppFlowySelection(
+          key: editorState.service.selectionServiceKey,
+          editable: false,
+          editorState: editorState,
+          child: editorState.service.renderPluginService.buildPluginWidget(
+            NodeWidgetContext(
+              context: context,
+              node: editorState.document.root,
+              editorState: editorState,
+            ),
           ),
         ),
       ),

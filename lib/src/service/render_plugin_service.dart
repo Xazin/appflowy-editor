@@ -121,7 +121,9 @@ class AppFlowyRenderPlugin extends AppFlowyRenderPluginService {
   }
 
   Widget _autoUpdateNodeWidget(
-      NodeWidgetBuilder builder, NodeWidgetContext context) {
+    NodeWidgetBuilder builder,
+    NodeWidgetContext context,
+  ) {
     Widget notifier;
     if (context.node is TextNode) {
       notifier = ChangeNotifierProvider.value(
