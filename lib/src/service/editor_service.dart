@@ -9,6 +9,7 @@ import 'package:appflowy_editor/src/render/rich_text/number_list_text.dart';
 import 'package:appflowy_editor/src/render/rich_text/quoted_text.dart';
 import 'package:appflowy_editor/src/render/rich_text/rich_text.dart';
 import 'package:appflowy_editor/src/service/shortcut_event/built_in_shortcut_events.dart';
+import 'package:appflowy_editor/src/service/text_event/built_in_text_events.dart';
 import 'package:flutter/material.dart' hide Overlay, OverlayEntry;
 
 NodeWidgetBuilders defaultBuilders = {
@@ -159,6 +160,9 @@ class _AppFlowyEditorState extends State<AppFlowyEditor> {
               key: editorState.service.inputServiceKey,
               editorState: editorState,
               editable: widget.editable,
+              textEvents: [
+                ...builtInTextEvents,
+              ],
               child: AppFlowyKeyboard(
                 key: editorState.service.keyboardServiceKey,
                 editable: widget.editable,

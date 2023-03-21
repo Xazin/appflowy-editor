@@ -7,7 +7,6 @@ import 'package:appflowy_editor/src/service/internal_key_event_handlers/markdown
 import 'package:appflowy_editor/src/service/internal_key_event_handlers/page_up_down_handler.dart';
 import 'package:appflowy_editor/src/service/internal_key_event_handlers/redo_undo_handler.dart';
 import 'package:appflowy_editor/src/service/internal_key_event_handlers/select_all_handler.dart';
-import 'package:appflowy_editor/src/service/internal_key_event_handlers/slash_handler.dart';
 import 'package:appflowy_editor/src/service/internal_key_event_handlers/format_style_handler.dart';
 import 'package:appflowy_editor/src/service/internal_key_event_handlers/space_on_web_handler.dart';
 import 'package:appflowy_editor/src/service/internal_key_event_handlers/tab_handler.dart';
@@ -244,11 +243,6 @@ List<ShortcutEvent> builtInShortcutEvents = [
     key: 'Delete Text',
     command: 'delete',
     handler: deleteEventHandler,
-  ),
-  ShortcutEvent(
-    key: 'selection menu',
-    command: 'slash,shift+slash',
-    handler: slashShortcutHandler,
   ),
   ShortcutEvent(
     key: 'enter',

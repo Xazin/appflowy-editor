@@ -128,15 +128,15 @@ class _AppFlowyKeyboardState extends State<AppFlowyKeyboard>
     }
 
     // TODO: use cache to optimize the searching time.
-    for (final shortcutEvent in widget.shortcutEvents) {
+    for (final shortcutEvent in shortcutEvents) {
       if (shortcutEvent.keybindings.containsKeyEvent(event)) {
         final result = shortcutEvent.handler(widget.editorState, event);
-        if (result == KeyEventResult.handled) {
-          return KeyEventResult.handled;
-        } else if (result == KeyEventResult.skipRemainingHandlers) {
-          return KeyEventResult.skipRemainingHandlers;
+
+        if (result == KeyEventResult.ignored) {
+          continue;
         }
-        continue;
+
+        return result;
       }
     }
 

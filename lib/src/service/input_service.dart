@@ -1,13 +1,15 @@
-import 'package:appflowy_editor/src/infra/log.dart';
-import 'package:appflowy_editor/src/core/transform/transaction.dart';
+import 'package:appflowy_editor/src/service/text_event/text_event_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:appflowy_editor/src/core/document/node.dart';
-import 'package:appflowy_editor/src/core/location/selection.dart';
-import 'package:appflowy_editor/src/editor_state.dart';
-import 'package:appflowy_editor/src/extensions/node_extensions.dart';
+import '../core/document/node.dart';
+import '../core/location/selection.dart';
+import '../core/transform/transaction.dart';
+import '../editor_state.dart';
+import '../extensions/node_extensions.dart';
+import '../infra/log.dart';
+import 'text_event/text_event.dart';
 
 /// [AppFlowyInputService] is responsible for processing text input,
 ///   including text insertion, deletion and replacement.
@@ -44,11 +46,13 @@ abstract class AppFlowyInputService {
 class AppFlowyInput extends StatefulWidget {
   const AppFlowyInput({
     Key? key,
+    this.textEvents = const [],
     this.editable = true,
     required this.editorState,
     required this.child,
   }) : super(key: key);
 
+  final List<TextEvent> textEvents;
   final EditorState editorState;
   final bool editable;
   final Widget child;
@@ -152,21 +156,39 @@ class _AppFlowyInputState extends State<AppFlowyInput>
     }
   }
 
+  void _invokeEventHandler(String invokee) {
+    for (final event in widget.textEvents) {
+      if (invokee.startsWith(event.invoker)) {
+        final result = event.handler(_editorState, invokee);
+
+        if (result == TextEventResult.handled) {
+          break;
+        }
+      }
+    }
+  }
+
   void _applyInsert(TextEditingDeltaInsertion delta) {
     final selectionService = _editorState.service.selectionService;
     final currentSelection = selectionService.currentSelection.value;
+
     if (currentSelection == null) {
       return;
     }
+
     if (currentSelection.isSingle) {
       final textNode = selectionService.currentSelectedNodes.first as TextNode;
+
       final transaction = _editorState.transaction;
       transaction.insertText(
         textNode,
         delta.insertionOffset,
         delta.textInserted,
       );
+
       _editorState.apply(transaction);
+
+      _invokeEventHandler(delta.textInserted);
     } else {
       // TODO: implement
     }
@@ -175,14 +197,18 @@ class _AppFlowyInputState extends State<AppFlowyInput>
   void _applyDelete(TextEditingDeltaDeletion delta) {
     final selectionService = _editorState.service.selectionService;
     final currentSelection = selectionService.currentSelection.value;
+
     if (currentSelection == null) {
       return;
     }
+
     if (currentSelection.isSingle) {
       final textNode = selectionService.currentSelectedNodes.first as TextNode;
       final length = delta.deletedRange.end - delta.deletedRange.start;
+
       final transaction = _editorState.transaction;
       transaction.deleteText(textNode, delta.deletedRange.start, length);
+
       _editorState.apply(transaction);
     } else {
       // TODO: implement
@@ -192,15 +218,23 @@ class _AppFlowyInputState extends State<AppFlowyInput>
   void _applyReplacement(TextEditingDeltaReplacement delta) {
     final selectionService = _editorState.service.selectionService;
     final currentSelection = selectionService.currentSelection.value;
+
     if (currentSelection == null) {
       return;
     }
+
     if (currentSelection.isSingle) {
       final textNode = selectionService.currentSelectedNodes.first as TextNode;
       final length = delta.replacedRange.end - delta.replacedRange.start;
+
       final transaction = _editorState.transaction;
       transaction.replaceText(
-          textNode, delta.replacedRange.start, length, delta.replacementText);
+        textNode,
+        delta.replacedRange.start,
+        length,
+        delta.replacementText,
+      );
+
       _editorState.apply(transaction);
     } else {
       // TODO: implement
