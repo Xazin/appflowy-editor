@@ -96,6 +96,7 @@ class _AppFlowyScrollState extends State<AppFlowyScroll>
       child: CustomScrollView(
         key: _scrollViewKey,
         physics: const NeverScrollableScrollPhysics(),
+        scrollBehavior: const AppFlowyScrollBehavior(),
         controller: _scrollController,
         slivers: [
           SliverFillRemaining(
@@ -109,11 +110,13 @@ class _AppFlowyScrollState extends State<AppFlowyScroll>
 
   @override
   void scrollTo(double dy) {
-    _scrollController.position.jumpTo(
+    _scrollController.position.animateTo(
       dy.clamp(
         _scrollController.position.minScrollExtent,
         _scrollController.position.maxScrollExtent,
       ),
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.linear,
     );
   }
 
@@ -141,5 +144,47 @@ class _AppFlowyScrollState extends State<AppFlowyScroll>
       final dy = (_scrollController.position.pixels - event.panDelta.dy);
       scrollTo(dy);
     }
+  }
+}
+
+class AppFlowyScrollBehavior extends ScrollBehavior {
+  const AppFlowyScrollBehavior();
+
+  @override
+  Widget buildScrollbar(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    if ([TargetPlatform.linux, TargetPlatform.macOS, TargetPlatform.windows]
+        .contains(getPlatform(context))) {
+      return AppFlowyScrollbar(
+        controller: details.controller,
+        child: child,
+      );
+    }
+
+    return child;
+  }
+}
+
+class AppFlowyScrollbar extends StatefulWidget {
+  final Widget child;
+  final ScrollController controller;
+
+  const AppFlowyScrollbar({
+    super.key,
+    required this.child,
+    required this.controller,
+  });
+
+  @override
+  State<AppFlowyScrollbar> createState() => _AppFlowyScrollbarState();
+}
+
+class _AppFlowyScrollbarState extends State<AppFlowyScrollbar> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
