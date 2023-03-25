@@ -283,9 +283,9 @@ List<ShortcutEvent> builtInShortcutEvents = [
     handler: tabHandler,
   ),
   ShortcutEvent(
-    key: 'Backquote to code',
-    command: 'backquote',
-    handler: backquoteToCodeHandler,
+    key: 'Backtick to code',
+    command: '`',
+    handler: backtickToCodeHandler,
   ),
   ShortcutEvent(
     key: 'Double tilde to strikethrough',
@@ -304,17 +304,22 @@ List<ShortcutEvent> builtInShortcutEvents = [
   ),
   ShortcutEvent(
     key: 'Underscore to italic',
-    command: 'shift+underscore',
+    command: '_',
     handler: underscoreToItalicHandler,
   ),
   ShortcutEvent(
+    key: 'Asterisk to italic',
+    command: '*',
+    handler: asteriskToItalicHandler,
+  ),
+  ShortcutEvent(
     key: 'Double asterisk to bold',
-    command: 'shift+digit 8',
+    command: '*',
     handler: doubleAsteriskToBoldHanlder,
   ),
   ShortcutEvent(
     key: 'Double underscore to bold',
-    command: 'shift+underscore',
+    command: '_',
     handler: doubleUnderscoreToBoldHanlder,
   ),
   // https://github.com/flutter/flutter/issues/104944
