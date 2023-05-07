@@ -1,45 +1,39 @@
 import 'package:appflowy_editor/src/infra/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rich_clipboard/rich_clipboard.dart';
+import 'package:rich_clipboard_platform_interface/rich_clipboard_platform_interface.dart';
 
-class MockClipboard {
-  final String? text;
-  final String? html;
+class MockRichBlipboardPlatform extends RichClipboardPlatform {
+  String? text;
+  String? html;
 
-  const MockClipboard({required this.text, required this.html});
+  MockRichBlipboardPlatform({
+    this.text,
+    this.html,
+  });
 
-  MockClipboard copyWith({
-    String? text,
-    String? html,
-  }) =>
-      MockClipboard(
-        text: text,
-        html: html,
-      );
+  @override
+  Future<List<String>> getAvailableTypes() async {
+    return [];
+  }
 
-  Map<String, String?> get getData => {"html": html, "text": text};
+  @override
+  Future<RichClipboardData> getData() async {
+    return RichClipboardData(text: text, html: html);
+  }
+
+  @override
+  Future<void> setData(RichClipboardData data) async {
+    html = data.html;
+    text = data.text;
+  }
 }
 
 void main() {
-  late MockClipboard mockClipboard;
-
   setUp(() {
-    mockClipboard = const MockClipboard(html: null, text: null);
-
-    SystemChannels.platform
-        .setMockMethodCallHandler((MethodCall methodCall) async {
-      switch (methodCall.method) {
-        case "Clipboard.getData":
-          return mockClipboard.getData;
-        case "Clipboard.setData":
-          final args = methodCall.arguments as Map<String, dynamic>;
-          mockClipboard = mockClipboard.copyWith(
-            text: args['text'],
-          );
-      }
-    });
+    RichClipboardPlatform.instance = MockRichBlipboardPlatform();
   });
 
   group('Clipboard tests', () {
@@ -53,36 +47,22 @@ void main() {
     testWidgets('AppFlowyClipboard setData and getData', (tester) async {
       const rawText = "Hello World";
 
-      AppFlowyClipboardData? clipboardData;
+      await RichClipboard.setData(const RichClipboardData(text: rawText));
+      final clipboardData = await RichClipboard.getData();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(platform: TargetPlatform.windows),
-          home: Column(
-            children: [
-              TextButton(
-                onPressed: () async =>
-                    await AppFlowyClipboard.setData(text: rawText),
-                child: const Text('setData'),
-              ),
-              TextButton(
-                onPressed: () async =>
-                    clipboardData = await AppFlowyClipboard.getData(),
-                child: const Text('getData'),
-              ),
-            ],
-          ),
-        ),
+      expect(clipboardData.text, rawText);
+    });
+
+    test('AppFlowyClipboard setData w/ HTML', () async {
+      const rawHTML = "<html><body><p>Hello world!</p></body></html>";
+
+      await RichClipboard.setData(
+        const RichClipboardData(html: rawHTML),
       );
-      await tester.pumpAndSettle();
 
-      await tester.tap(find.text('setData'));
-      await tester.pumpAndSettle();
+      final clipboardData = await RichClipboard.getData();
 
-      await tester.tap(find.text('getData'));
-      await tester.pumpAndSettle();
-
-      expect(clipboardData?.text, rawText);
+      expect(clipboardData.html, rawHTML);
     });
   });
 }
