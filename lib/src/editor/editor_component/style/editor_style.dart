@@ -10,15 +10,26 @@ import 'package:flutter/material.dart';
 class EditorStyle {
   const EditorStyle({
     required this.padding,
+    EdgeInsets? headerPadding,
+    EdgeInsets? footerPadding,
     required this.cursorColor,
     required this.selectionColor,
     required this.textStyleConfiguration,
     required this.textSpanDecorator,
     this.defaultTextDirection,
-  });
+  })  : headerPadding = headerPadding ?? padding,
+        footerPadding = footerPadding ?? padding;
 
   /// The padding of the editor.
   final EdgeInsets padding;
+
+  /// The padding of the header.
+  /// Defaults to [padding]
+  final EdgeInsets? headerPadding;
+
+  /// The padding of the header.
+  /// Defaults to [padding]
+  final EdgeInsets? footerPadding;
 
   /// The cursor color
   final Color cursorColor;
@@ -45,12 +56,20 @@ class EditorStyle {
 
   const EditorStyle.desktop({
     EdgeInsets? padding,
+    EdgeInsets? headerPadding,
+    EdgeInsets? footerPadding,
     Color? cursorColor,
     Color? selectionColor,
     TextStyleConfiguration? textStyleConfiguration,
     TextSpanDecoratorForAttribute? textSpanDecorator,
     this.defaultTextDirection,
   })  : padding = padding ?? const EdgeInsets.symmetric(horizontal: 100),
+        headerPadding = headerPadding ??
+            padding ??
+            const EdgeInsets.symmetric(horizontal: 100),
+        footerPadding = footerPadding ??
+            padding ??
+            const EdgeInsets.symmetric(horizontal: 100),
         cursorColor = cursorColor ?? const Color(0xFF00BCF0),
         selectionColor =
             selectionColor ?? const Color.fromARGB(53, 111, 201, 231),
@@ -63,12 +82,20 @@ class EditorStyle {
 
   const EditorStyle.mobile({
     EdgeInsets? padding,
+    EdgeInsets? headerPadding,
+    EdgeInsets? footerPadding,
     Color? cursorColor,
     Color? selectionColor,
     TextStyleConfiguration? textStyleConfiguration,
     TextSpanDecoratorForAttribute? textSpanDecorator,
     this.defaultTextDirection,
   })  : padding = padding ?? const EdgeInsets.symmetric(horizontal: 20),
+        headerPadding = headerPadding ??
+            padding ??
+            const EdgeInsets.symmetric(horizontal: 20),
+        footerPadding = footerPadding ??
+            padding ??
+            const EdgeInsets.symmetric(horizontal: 20),
         cursorColor = cursorColor ?? const Color(0xFF00BCF0),
         selectionColor =
             selectionColor ?? const Color.fromARGB(53, 111, 201, 231),
@@ -81,6 +108,8 @@ class EditorStyle {
 
   EditorStyle copyWith({
     EdgeInsets? padding,
+    EdgeInsets? headerPadding,
+    EdgeInsets? footerPadding,
     Color? cursorColor,
     Color? selectionColor,
     TextStyleConfiguration? textStyleConfiguration,
@@ -89,6 +118,8 @@ class EditorStyle {
   }) {
     return EditorStyle(
       padding: padding ?? this.padding,
+      headerPadding: headerPadding ?? this.headerPadding,
+      footerPadding: footerPadding ?? this.footerPadding,
       cursorColor: cursorColor ?? this.cursorColor,
       selectionColor: selectionColor ?? this.selectionColor,
       textStyleConfiguration:
