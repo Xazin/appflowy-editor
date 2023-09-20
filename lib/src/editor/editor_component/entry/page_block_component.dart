@@ -47,6 +47,7 @@ class PageBlockComponent extends BlockComponentStatelessWidget {
   @override
   Widget build(BuildContext context) {
     final editorState = context.read<EditorState>();
+    final editorStyle = editorState.editorStyle;
     final scrollController = context.read<EditorScrollController>();
     final items = node.children;
 
@@ -56,16 +57,24 @@ class PageBlockComponent extends BlockComponentStatelessWidget {
           editorState.updateAutoScroller(Scrollable.of(context));
           return Column(
             children: [
-              if (header != null) header!,
+              if (header != null)
+                Padding(
+                  padding: editorStyle.headerPadding,
+                  child: header!,
+                ),
               ...items
                   .map(
                     (e) => Padding(
-                      padding: editorState.editorStyle.padding,
+                      padding: editorStyle.padding,
                       child: editorState.renderer.build(context, e),
                     ),
                   )
                   .toList(),
-              if (footer != null) footer!,
+              if (footer != null)
+                Padding(
+                  padding: editorStyle.footerPadding,
+                  child: footer!,
+                ),
             ],
           );
         },
@@ -82,8 +91,20 @@ class PageBlockComponent extends BlockComponentStatelessWidget {
         itemCount: items.length + extentCount,
         itemBuilder: (context, index) {
           editorState.updateAutoScroller(Scrollable.of(context));
-          if (header != null && index == 0) return header!;
-          if (footer != null && index == items.length + 1) return footer!;
+          if (header != null && index == 0) {
+            return Padding(
+              padding: editorStyle.headerPadding,
+              child: header!,
+            );
+          }
+
+          if (footer != null && index == items.length + 1) {
+            return Padding(
+              padding: editorStyle.footerPadding,
+              child: footer!,
+            );
+          }
+
           return Padding(
             padding: editorState.editorStyle.padding,
             child: editorState.renderer.build(

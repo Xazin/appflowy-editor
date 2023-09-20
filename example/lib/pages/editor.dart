@@ -22,8 +22,8 @@ class Editor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
+    return DecoratedBox(
+      decoration: const BoxDecoration(color: Colors.white),
       child: FutureBuilder<String>(
         future: jsonString,
         builder: (context, snapshot) {

@@ -10,26 +10,23 @@ import 'package:flutter/material.dart';
 class EditorStyle {
   const EditorStyle({
     required this.padding,
-    EdgeInsets? headerPadding,
-    EdgeInsets? footerPadding,
+    this.headerPadding = EdgeInsets.zero,
+    this.footerPadding = EdgeInsets.zero,
     required this.cursorColor,
     required this.selectionColor,
     required this.textStyleConfiguration,
     required this.textSpanDecorator,
     this.defaultTextDirection,
-  })  : headerPadding = headerPadding ?? padding,
-        footerPadding = footerPadding ?? padding;
+  });
 
   /// The padding of the editor.
   final EdgeInsets padding;
 
   /// The padding of the header.
-  /// Defaults to [padding]
-  final EdgeInsets? headerPadding;
+  final EdgeInsets headerPadding;
 
   /// The padding of the header.
-  /// Defaults to [padding]
-  final EdgeInsets? footerPadding;
+  final EdgeInsets footerPadding;
 
   /// The cursor color
   final Color cursorColor;
@@ -64,12 +61,8 @@ class EditorStyle {
     TextSpanDecoratorForAttribute? textSpanDecorator,
     this.defaultTextDirection,
   })  : padding = padding ?? const EdgeInsets.symmetric(horizontal: 100),
-        headerPadding = headerPadding ??
-            padding ??
-            const EdgeInsets.symmetric(horizontal: 100),
-        footerPadding = footerPadding ??
-            padding ??
-            const EdgeInsets.symmetric(horizontal: 100),
+        headerPadding = headerPadding ?? EdgeInsets.zero,
+        footerPadding = footerPadding ?? EdgeInsets.zero,
         cursorColor = cursorColor ?? const Color(0xFF00BCF0),
         selectionColor =
             selectionColor ?? const Color.fromARGB(53, 111, 201, 231),
@@ -90,12 +83,8 @@ class EditorStyle {
     TextSpanDecoratorForAttribute? textSpanDecorator,
     this.defaultTextDirection,
   })  : padding = padding ?? const EdgeInsets.symmetric(horizontal: 20),
-        headerPadding = headerPadding ??
-            padding ??
-            const EdgeInsets.symmetric(horizontal: 20),
-        footerPadding = footerPadding ??
-            padding ??
-            const EdgeInsets.symmetric(horizontal: 20),
+        headerPadding = headerPadding ?? EdgeInsets.zero,
+        footerPadding = footerPadding ?? EdgeInsets.zero,
         cursorColor = cursorColor ?? const Color(0xFF00BCF0),
         selectionColor =
             selectionColor ?? const Color.fromARGB(53, 111, 201, 231),
