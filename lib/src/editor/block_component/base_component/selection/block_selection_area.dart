@@ -88,16 +88,12 @@ class _BlockSelectionAreaState extends State<BlockSelectionArea> {
     return ValueListenableBuilder(
       key: ValueKey(widget.node.id + widget.supportTypes.toString()),
       valueListenable: widget.listenable,
-      builder: ((context, value, child) {
+      builder: (context, value, child) {
         final sizedBox = child ?? const SizedBox.shrink();
         final selection = value?.normalized;
 
-        if (selection == null) {
-          return sizedBox;
-        }
-
         final path = widget.node.path;
-        if (!path.inSelection(selection)) {
+        if (selection == null || !path.inSelection(selection)) {
           return sizedBox;
         }
 
@@ -107,12 +103,13 @@ class _BlockSelectionAreaState extends State<BlockSelectionArea> {
               prevBlockRect == null) {
             return sizedBox;
           }
+
           return Positioned.fromRect(
             rect: prevBlockRect!,
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 color: widget.blockColor,
-                borderRadius: BorderRadius.circular(0.0),
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
           );
@@ -123,16 +120,16 @@ class _BlockSelectionAreaState extends State<BlockSelectionArea> {
               prevCursorRect == null) {
             return sizedBox;
           }
-          final cursor = Cursor(
+
+          // force to show the cursor
+          cursorKey.currentState?.unwrapOrNull<CursorState>()?.show();
+          return Cursor(
             key: cursorKey,
             rect: prevCursorRect!,
             shouldBlink: widget.delegate.shouldCursorBlink,
             cursorStyle: widget.delegate.cursorStyle,
             color: widget.cursorColor,
           );
-          // force to show the cursor
-          cursorKey.currentState?.unwrapOrNull<CursorState>()?.show();
-          return cursor;
         } else {
           // show the selection area when the selection is not collapsed
           if (!widget.supportTypes.contains(BlockSelectionType.selection) ||
@@ -140,13 +137,13 @@ class _BlockSelectionAreaState extends State<BlockSelectionArea> {
               prevSelectionRects!.isEmpty) {
             return sizedBox;
           }
+
           return SelectionAreaPaint(
             rects: prevSelectionRects!,
             selectionColor: widget.selectionColor,
           );
         }
-      }),
-      child: const SizedBox.shrink(),
+      },
     );
   }
 
