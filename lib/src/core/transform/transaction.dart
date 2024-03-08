@@ -121,6 +121,20 @@ class Transaction {
     add(DeleteOperation(path, nodes));
   }
 
+  /// Replaces the [Node] at the given [Path].
+  ///
+  void replaceNodeAtPath(Path path, Node newNode) {
+    if (path.isEmpty) return;
+    final parent = path.parent;
+    final node = document.nodeAtPath(parent + [path.last]);
+    if (node == null) {
+      return;
+    }
+
+    add(DeleteOperation(path, [node]));
+    add(InsertOperation(path, [newNode]));
+  }
+
   /// Moves a [Node] to the provided [Path]
   void moveNode(Path path, Node node) {
     deleteNode(node);
@@ -329,6 +343,17 @@ extension TextTransaction on Transaction {
       ..retain(length, attributes: attributes);
 
     addDeltaToComposeMap(node, format);
+  }
+
+  /// changes the node's [deleteWholeNode]
+  void updateDeleteWholeNode(
+    Node node,
+    bool deleteWholeNode,
+  ) {
+    replaceNodeAtPath(
+      node.path,
+      node.copyWith(deleteWholeNode: deleteWholeNode),
+    );
   }
 
   /// replace the text at the given [index] with the [text].

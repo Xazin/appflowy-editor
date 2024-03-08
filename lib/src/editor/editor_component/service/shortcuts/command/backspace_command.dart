@@ -1,5 +1,6 @@
-import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
+
+import 'package:appflowy_editor/appflowy_editor.dart';
 
 /// Backspace key event.
 ///
@@ -48,7 +49,8 @@ CommandShortcutEventHandler _backspaceInCollapsedSelection = (editorState) {
   final transaction = editorState.transaction;
 
   // delete the entire node if the delta is empty
-  if (node.delta == null) {
+  // or if the node has specified that it should be deleted
+  if (node.delta == null || node.deleteWholeNode) {
     transaction.deleteNode(node);
     transaction.afterSelection = Selection.collapsed(
       Position(

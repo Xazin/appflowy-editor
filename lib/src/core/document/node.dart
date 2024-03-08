@@ -1,9 +1,11 @@
 import 'dart:collection';
 
-import 'package:appflowy_editor/appflowy_editor.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+
+import 'package:collection/collection.dart';
 import 'package:nanoid/non_secure.dart';
+
+import 'package:appflowy_editor/appflowy_editor.dart';
 
 abstract class NodeExternalValues {
   const NodeExternalValues();
@@ -33,6 +35,7 @@ final class Node extends ChangeNotifier with LinkedListEntry<Node> {
     this.parent,
     Attributes attributes = const {},
     Iterable<Node> children = const [],
+    this.deleteWholeNode = false,
   })  : _children = LinkedList<Node>()
           ..addAll(
             children.map(
@@ -69,6 +72,9 @@ final class Node extends ChangeNotifier with LinkedListEntry<Node> {
 
   /// The id of the node.
   final String id;
+
+  // Whether backspace should delete the whole node
+  final bool deleteWholeNode;
 
   @Deprecated('Use type instead')
   String get subtype => type;
@@ -260,12 +266,14 @@ final class Node extends ChangeNotifier with LinkedListEntry<Node> {
     String? type,
     Iterable<Node>? children,
     Attributes? attributes,
+    bool? deleteWholeNode,
   }) {
     final node = Node(
       type: type ?? this.type,
       id: nanoid(6),
       attributes: attributes ?? {...this.attributes},
       children: children ?? [],
+      deleteWholeNode: deleteWholeNode ?? this.deleteWholeNode,
     );
     if (children == null && _children.isNotEmpty) {
       for (final child in _children) {
@@ -360,6 +368,7 @@ final class TextNode extends Node {
     Attributes? attributes,
     Delta? delta,
     String? id,
+    bool? deleteWholeNode,
   }) {
     final textNode = TextNode(
       children: children ?? [],
