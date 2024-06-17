@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:appflowy_editor/src/editor/find_replace_menu/search_algorithm.dart';
-import 'package:flutter/foundation.dart';
 
 const selectionExtraInfoDisableToolbar = 'selectionExtraInfoDisableToolbar';
 
@@ -162,6 +163,8 @@ class SearchServiceV3 {
   void navigateToMatch({bool moveUp = false}) {
     if (matchWrappers.value.isEmpty) return;
 
+    editorState.service.keyboardService?.disable();
+
     if (moveUp) {
       selectedIndex = selectedIndex <= 0
           ? matchWrappers.value.length - 1
@@ -173,6 +176,8 @@ class SearchServiceV3 {
     }
 
     _highlightCurrentMatch(queriedPattern);
+
+    editorState.service.keyboardService?.enable();
   }
 
   /// Replaces the current selected word with replaceText.

@@ -1,9 +1,11 @@
-import 'package:appflowy_editor/appflowy_editor.dart';
-import 'package:appflowy_editor/src/editor/editor_component/service/ime/delta_input_on_floating_cursor_update.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:provider/provider.dart';
+
+import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:appflowy_editor/src/editor/editor_component/service/ime/delta_input_on_floating_cursor_update.dart';
 
 import 'ime/delta_input_impl.dart';
 
@@ -41,6 +43,9 @@ class KeyboardServiceWidgetState extends State<KeyboardServiceWidget>
 
   // use for IME only
   bool enableShortcuts = true;
+
+  // decides if editor can receive focus
+  bool _enableFocus = true;
 
   @override
   void initState() {
@@ -112,14 +117,27 @@ class KeyboardServiceWidgetState extends State<KeyboardServiceWidget>
   }
 
   @override
+  void enableFocus() => setState(() => _enableFocus = true);
+
+  @override
+  void disableFocus() => setState(() => _enableFocus = false);
+
+  @override
   void disable({
     bool showCursor = false,
     UnfocusDisposition disposition = UnfocusDisposition.previouslyFocusedChild,
-  }) =>
-      focusNode.unfocus(disposition: disposition);
+  }) {
+    _enableFocus = false;
+    focusNode.unfocus(disposition: disposition);
+    setState(() {});
+  }
 
   @override
-  void enable() => focusNode.requestFocus();
+  void enable() {
+    _enableFocus = true;
+    // focusNode.requestFocus();
+    setState(() {});
+  }
 
   // Used in mobile only
   @override
@@ -141,6 +159,9 @@ class KeyboardServiceWidgetState extends State<KeyboardServiceWidget>
     if (widget.commandShortcutEvents.isNotEmpty) {
       // the Focus widget is used to handle hardware keyboard.
       child = Focus(
+        canRequestFocus: _enableFocus,
+        descendantsAreFocusable: true,
+        descendantsAreTraversable: true,
         focusNode: focusNode,
         onKeyEvent: _onKeyEvent,
         child: child,
@@ -164,7 +185,8 @@ class KeyboardServiceWidgetState extends State<KeyboardServiceWidget>
   /// handle hardware keyboard
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
     if ((event is! KeyDownEvent && event is! KeyRepeatEvent) ||
-        !enableShortcuts) {
+        !enableShortcuts ||
+        !_enableFocus) {
       if (textInputService.composingTextRange != TextRange.empty) {
         return KeyEventResult.skipRemainingHandlers;
       }

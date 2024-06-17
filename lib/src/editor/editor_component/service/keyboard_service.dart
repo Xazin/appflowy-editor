@@ -1,5 +1,6 @@
-import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
+
+import 'package:appflowy_editor/appflowy_editor.dart';
 
 /// [AppFlowyKeyboardService] is responsible for processing shortcut keys,
 ///   like command, shift, control keys.
@@ -31,6 +32,14 @@ abstract class AppFlowyKeyboardService {
     bool showCursor = false,
     UnfocusDisposition disposition = UnfocusDisposition.scope,
   });
+
+  /// Enables the service to be able to request focus.
+  ///
+  void enableFocus();
+
+  /// Disables the service from being able to request focus.
+  ///
+  void disableFocus();
 
   /// Closes the keyboard
   ///
