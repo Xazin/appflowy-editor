@@ -524,7 +524,16 @@ class _DesktopSelectionServiceWidgetState
 
     final isCloserToStart = topDistance < bottomDistance;
 
-    final dropPath = isCloserToStart ? node?.path : node?.path.next;
+    List<int>? dropPath;
+    if (isCloserToStart) {
+      dropPath = node?.path;
+    } else {
+      if (node?.path.next == null) {
+        dropPath = node?.path;
+      } else {
+        dropPath = node?.path.next;
+      }
+    }
 
     return DropTargetRenderData(
       dropPath: dropPath ?? node?.path,
